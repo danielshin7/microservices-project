@@ -4,6 +4,7 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Iterator;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,12 +17,13 @@ import org.springframework.web.bind.annotation.RestController;
 import com.example.demo.object.Customer;
 import com.example.demo.object.CustomerFactory;
 import com.example.demo.object.Token;
+import com.example.demo.repository.CustomerRepository;
 import com.example.demo.authorizer.JWTAuthorizer;
 
 @RestController
 @RequestMapping("/token")
 public class TokenAPI {
-
+	CustomerRepository repo;
 	//private static Key key = AuthFilter.key;	
 	public static Token appUserToken;
 	
@@ -31,7 +33,6 @@ public class TokenAPI {
 	}
 	
 	@PostMapping
-	// public ResponseEntity<?> createTokenForCustomer(@RequestBody Customer customer, HttpRequest request, UriComponentsBuilder uri) {
 	public ResponseEntity<?> createTokenForCustomer(@RequestBody Customer customer) {
 		
 		String username = customer.getName();
@@ -42,27 +43,11 @@ public class TokenAPI {
 			ResponseEntity<?> response = ResponseEntity.ok(token);
 			return response;			
 		}
-		// bad request
 		return (ResponseEntity<?>) ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
 		
 	}
 	
 	private boolean checkPassword(String username, String password) {
-		// special case for application user
-		if(username.equals("ApiClientApp") && password.equals("secret")) {
-			return true;
-		}
-		// make call to customer service 
-		Customer cust = getCustomerByNameFromCustomerAPI(username);
-		
-		// compare name and password
-		if(cust != null && cust.getName().equals(username) && cust.getPassword().equals(password)) {
-			return true;				
-		}		
-		return false;
-		
-		// local version of the above code, gets customer from repository
-		/*
 		Iterator<Customer> customers = repo.findAll().iterator();
 		while(customers.hasNext()) {
 			Customer cust = customers.next();
@@ -70,9 +55,7 @@ public class TokenAPI {
 				return true;				
 			}
 		}
-		*/
-		
-
+		return false;
 	}
 	
 	public static Token getAppUserToken() {

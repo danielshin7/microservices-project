@@ -1,3 +1,6 @@
+/*
+ * Class to create and verify tokens
+ */
 package com.example.demo.authorizer;
 
 import java.util.Date;
@@ -12,7 +15,9 @@ import com.auth0.jwt.interfaces.Claim;
 import com.auth0.jwt.interfaces.DecodedJWT;
 
 public class JWTAuthorizer {
-	
+	/*
+	 * Create token
+	 */
 	public static String createToken(String scopes) {
 		try {
 		    Algorithm algorithm = Algorithm.HMAC256("secret");
@@ -29,7 +34,9 @@ public class JWTAuthorizer {
 			return null;
 		}	
 	}
-
+	/*
+	 * Verify token
+	 */
 	public static boolean verifyToken(String token) {
 		try {
 		    Algorithm algorithm = Algorithm.HMAC256("secret");
